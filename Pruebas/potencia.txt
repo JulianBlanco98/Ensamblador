@@ -1,0 +1,48 @@
+.data 
+cad1: .asciiz “\nDame la base real:”
+cad2: .asciiz “\nDame el exponente entero:”
+cad3: .asciiz “\nEl resultado es:”
+.text
+.global inicio
+inicio: addi $2,$0,4	 #Código impresión
+la $4, cad1 #dirección de cadena1
+syscall #Impresión
+addi $2,$0,6 #Cod. lectura float
+syscall #Lectura base
+addi $2,$0,4 #Cod. impresión
+la $4, cad2 #dirección cadena2
+syscall #Impresión
+addi $2,$0,5 #Cod. lectura entero
+syscall #Lectura exponente
+mfc1 $4,$f0 #Pasamos la base a $4
+add $5,$0,$2 #Exponente en $5
+jal pot #Llamada a rutina
+mtc1 $2,$f12 #Resultado de $2 a $f12
+addi $2,$0,4 #Código impresión
+la $4,cad3 #Dirección cadena3
+syscall #Impresión
+addi $2,$0,2 #Escritura float
+syscall #Escribimos $f12
+addi $2,$0,10 #Cod. salida programa
+syscall
+.end
+pot: 	addi $29,$29,-12 #Hacemos sitio en pila
+	sw $9,0($29) #Apila $9
+	sw $f4, 4($29) #Apila $f4
+	s.s $f6, 8($29) #Apila $f6
+	addi $9,$0,2 #i:=2
+	mtc1 $4,$f4 #aux:=base
+	mtc1 $4,$f6 #$f6:=base
+for: 
+slt $10,$5,$9 #¿i>exponente?
+bne $10,$0,exif #salir si i>exponente
+mul.s $f4,$f4,$f6 #aux:=aux*base
+addi $9,$9,1 #i:=i+1
+j for
+exif: 
+mfc $2,$f4 #Devolvemos res en $2
+lw $9,0($29) #Desapilar $9
+l.s $f4, 4($29) #Desapilar $f4
+l.s $f6, 8($29) #Desapilar $f6
+addi $29,$29, 12 #Restaurar pila
+jr $31 #Fin subrutina

@@ -1,0 +1,63 @@
+#Realizar un programa que contenga una subrutina recursiva para el cálculo del factorial de
+#un número.
+
+.data    # Comienzo del segmento de datos  
+cad1:     .asciiz "Introduzca un número: "  
+cad2: .asciiz "\nEl factorial es: "
+
+.globl main # Declaración de la etiqueta main como global
+
+.text       # Comienzo del segmento de texto
+
+# Función main
+main:
+
+ li $v0, 4    # Llamada al sistema que imprime la cadena que se
+ la $a0, cad1 # encuentra en la dirección especificada por
+ syscall      # la etiqueta 'cad1' 
+
+ li $v0, 5    # Llamada al sistema que lee un entero de teclado 
+ syscall
+ move $a0, $v0 # Pasamos el entero leído a $a0 (argumento de la función factorial)
+
+ jal factorial   # Llamada a la función factorial
+ move $t0, $v0   # $v0 = n! Guardamos el resultado de la función en $t0
+
+ li $v0, 4    # Llamada al sistema que imprime la cadena que se
+ la $a0, cad2 # encuentra en la dirección especificada por
+ syscall      # la etiqueta 'cad2' 
+
+ move $a0, $t0  # Llamada al sistema que imprime un entero (resultado)
+ li $v0, 1 
+ syscall
+
+ li $v0, 10   # Llamada al sistema para finalizar la ejecución
+ syscall      # (fin de la función main)
+
+
+# Función factorial
+factorial:
+ beqz $a0, trivial # Si es el 0 es el caso trivial
+ 
+ #Caso recursivo (no trivial):
+ # Como el entero no era el 0...
+ addi $sp, $sp, -4 # Se apila el $ra para no perder la dirección
+ sw $ra, ($sp)  # de retorno
+ addi $sp, $sp, -4 # Se apila el argumento (n).
+ sw $a0, ($sp)  #
+
+ addi $a0, $a0, -1 # $a0 = n-1
+ jal factorial  # Llamada recursiva a la función para que calcule
+    # el factorial de n-1
+ lw $a0, ($sp)  # Desapilamos el valor n que habíamos guardado
+ addi $sp, $sp, 4
+ lw $ra, ($sp)  # Desapilamos el $ra que habíamos guardado
+ addi $sp, $sp, 4
+
+ mult $a0, $v0  # Multiplicamos $a0 por $v0, es decir: n*(n-1)!
+ mflo $v0  # En $v0 tenemos el factorial de n
+ jr $ra   # Fin de la función factorial
+
+  trivial:   # A esta parte se llega si el argumento es 0
+ li $v0, 1  # El factorial de 0 es 1. El resultado se
+ jr $ra   # devuelve en $v0 y se sale de la función.

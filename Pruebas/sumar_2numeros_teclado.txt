@@ -1,0 +1,35 @@
+main: addi    $v0, $zero, 4    # Servicio 4
+      la      $a0, str1        # se imprime una cadena
+      syscall                  # para pedir un número
+
+      addi     $v0, $0, 5      # Servicio 5
+      syscall                  # se lee el número
+      add      $8, $0, $v0            # se coloca en $8
+
+      addi     $v0, $zero, 4   # Servicio 4
+      la       $a0, str2       # se imprime una cadena
+      syscall                  # para pedir el otro número
+
+      addi     $v0, $0, 5      # servicio 5
+      syscall                  # se lee el otro numero
+      add      $9, $0, $v0     # se coloca en $9
+
+      addi     $v0, $zero, 4   # Servicio 4
+      la       $a0, str3       # para indicar que se
+      syscall                  # dará el resultado
+
+      add      $a0, $8, $9     # Se coloca la suma como argumento
+      addi     $v0, $0, 1      # Servicio 1
+      syscall                  # se muestra el resultado
+
+      addi     $v0, $zero, 4   # Servicio 4
+      la       $a0, str4       # muestra una cadena de
+      syscall                  # terminación del programa
+
+      jr       $31             # fin del main
+
+      .data
+str1:    .asciiz   "Dame un numero: "
+str2:    .asciiz   "Dame otro numero: "
+str3:    .asciiz   "La suma de los numeros es : "
+str4:    .asciiz   "\n\nFin del programa, Adios . . ."

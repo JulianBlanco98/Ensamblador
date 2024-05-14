@@ -1,0 +1,13 @@
+.data 0x10000000 #Seg. de datos
+.asciiz “Fundamentos”
+.text
+.global inicio #En SPIM __start
+inicio: lui $20, 0x1000 #Carga parte alta
+ori $20, 0x0000 #Carga parte baja
+addi $21, $0, 0 #Inicializamos a 0
+bucle: lb $19, 0($20) #Lectura byte de la cad.
+beq $0, $19, fin #Si es 0 (NULL), fin
+addi $20, $20, 1 #Inc. para leer sig. car
+addi $21, $21, 1 #Inc. longitud
+j bucle
+fin: .end

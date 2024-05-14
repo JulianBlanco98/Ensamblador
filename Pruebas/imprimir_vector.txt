@@ -1,0 +1,24 @@
+main: 
+    addi $v0, $zero, 5
+    syscall              #$v0 tiene n
+
+    add  $a0, $zero, $v0 #valor para imprimir
+    addi $v0, $zero, 1   #para llamar a syscall
+
+    jal fun              #llamada a la función
+
+    jr $ra
+
+fun:
+    addi $sp, $sp, -4     #Almacenamiento de la dirección
+    sw $ra, 0 ($sp)       #de retorno
+    
+    syscall                   #impresion del valor
+    beq $a0, $zero, finfun    # fin ocasionado por el caso base
+    addi $a0, $a0, -1         # n = n -1 
+    jal fun                   #llamada recursiva
+
+finfun:
+    lw $ra, 0 ($sp)        #recuperación de la direccion
+    addi $sp, $sp, 4       #de retorno
+    jr $ra

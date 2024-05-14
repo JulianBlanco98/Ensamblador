@@ -1,0 +1,42 @@
+.data
+buffer: .space 100
+cad: .asciiz "\nIntroduce la cadena:"
+si: .asciiz "\nLa cadena es capicua"
+no: .asciiz "\nLa cadena no es capicua"
+.text
+.globl __start
+__start: la $4,cad
+addi $2,$0,4
+syscall
+addi $2,$0,8
+la $4,buffer
+addi $5,$0,100
+syscall
+add $11,$0,$0 #Cálculo de la longitud
+addi $12,$0,10
+long: lb $10,0($4)
+beq $10,$12,finlong
+addi $4,$4,1
+addi $11,$11,1
+j long
+finlong: beq $11,$0,fin #Cadena vacia
+addi $4,$4,-1 #Apuntar al ultimo char.
+la $5,buffer
+bucle: lb $10,0($4)
+lb $12,0($5)
+bne $10,$12,finno
+addi $4,$4,-1
+addi $5,$5,1
+addi $11,$11,-2
+slti $13,$11, 2 #$13=1 si $11<2 --- fin
+bne $13,$0,finsi
+j bucle
+finsi: la $4,si
+addi $2,$0,4
+syscall
+j fin
+finno: la $4,no
+addi $2,$0,4
+syscall
+fin: addi $2,$0,10
+syscall

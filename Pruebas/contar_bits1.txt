@@ -1,0 +1,13 @@
+.data 0x10000000
+.text
+.global __start
+inicio: add $21, $0, $0 #Contador a 0
+beq $20, $0, fin #Si no hay 1’s, fin
+addi $18, $0, 1 #Ponemos 1 en $18
+rotar: beq $18, $0, fin #32 desplazamientos
+and $19, $20, $18 #Extraer bit i-essimo
+sll $18, $18, 1 #Desplazar a la izq.
+beq $19, $0, rotar #Bit 0, no contamos
+addi $21, $21, 1 #Incrementamos cuenta
+j rotar
+fin .end

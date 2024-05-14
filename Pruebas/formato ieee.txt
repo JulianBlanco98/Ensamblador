@@ -1,0 +1,52 @@
+.data
+flotant: .float 103.487
+string: .byte 0,0,0,0,0,0,0,0,0 #Espacio para almacenar el
+número
+cad: .asciiz "\nIntroduce el número en coma flotante:"
+return: .asciiz "\nEl número en formato IEEE754 es (en Hex.):\n"
+.text
+.globl __start
+__start: la $4,cad #Impresión de la cadena “cad”
+addi $2,$0,4
+syscall
+addi $2,$0,6 #Lectura de número en coma flotante
+syscall
+mov.s $f12, $f0 #Impresión del número
+addi $2, $0, 2
+syscall
+mfc1 $4, $f0 #Llevmos el número del copro a la
+addi $5, $0, 16 #CPU para su visualización
+addi $6, $0, 7
+bucle: divu $4, $5 #Conversión a hexadecimal
+mfhi $7 #Dividiendo por 16 sucesivamente
+sb $7, string($6) #Y almacenando los resultados en
+addi $6, $6, -1 #el espacio reservado en orden
+mflo $4 #inverso: primera división dígito
+bne $4,$0,bucle #menos significativo
+add $6, $0, $0
+addi $10, $0, 8
+loop: lb $4, string($6) #Conversión de la cadena de digitos
+slti $5, $4, 10 #hex. en sus correspondientes
+bne $5, $0, menorde10 #caracteres ASCII para poderlos
+#Imprimir
+majorde10:addi $4, $4, 55 #Si el dígito es mayor de 9
+j finloop #sumamos 55 a su valor para convertir
+#en los caracteres de ‘A’ a ‘F’.
+menorde10:addi $4, $4, 48 #Si esta entre 0 y 9, sumamos 48 para
+#Convertir en caracteres ‘0’ a ‘9’.
+finloop: sb $4, string($6)
+addi $6, $6, 1
+beq $6, $10, fin #Repetimos para todos los dígitos
+j loop
+fin: la $4,return #Imprimimos la cadena return
+addi $2,$0,4
+syscall
+la $4,string #Imprimimos la cadena correspondiente
+addi $2,$0,4 #al numero convertido
+syscall
+addi $2,$0,8 #Esperamos la pulsacion de una tecla
+la $4,cad
+addi $5,$0,2
+syscall
+addi $2,$0,10 #Fin del programa
+syscall

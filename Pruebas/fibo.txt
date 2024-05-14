@@ -1,0 +1,42 @@
+.data
+.text
+.globl __start
+__start:
+addi $2,$0,5
+syscall
+add $4,$0,$2
+jal fibon
+j fin
+fibon: addi $29,$29,
+-12
+sw $10,8($29)
+sw $4,4($29)
+sw $31,0($29)
+beq $4,$0,zero
+slti $10,$4,2
+bne $10,$0,un
+addi $4,$4,
+-
+1
+jal fibon
+add $10,$0,$2
+lw $4,4($29)
+addi $4,$4,
+-
+2
+jal fibon
+add $2,$2,$10
+jr finfibo
+zero: add $2,$0,$0
+jr finfibo
+un: addi $2,$0,1
+finfibo: lw $31,0($29)
+lw $4,4($29)
+lw $10,8($29)
+addi $29,$29,12
+jr $31
+fin: add $4,$0,$2
+add $2,$0,1
+syscall
+addi $2,$0,10
+sycall

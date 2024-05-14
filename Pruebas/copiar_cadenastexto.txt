@@ -1,0 +1,20 @@
+.data 0x10000000
+cad1: .asciiz “ensamblador”
+cad2: .asciiz “ejemplo”
+dest: .space 19
+.text
+.global __start
+inicio: add $16,$0,$0
+lcad1: lb $17, cad1($16) #Leer caracter cad. 1
+beq $17,$0,flcad1 #Si es 0, leer cad. 2
+sb $17,dest($16) #Copiamos a destino
+addi $16,$16,1 #Incrementamos indice
+j lcad1 #Seguir leyendo cad. 1
+flcad: add $18,$0,$0 #Lectura seg. cadena
+lcad2: lb $17,cad2($18) #Leer carácter
+sb $17,dest($16) #Copiar a destino
+beq $17,$0, fin #Con NULL acabamos
+addi $16,$16, 1 #Incrementamos indice 1
+addi $18, $18, 1 #Inc. indice 2
+j lcad2
+fin: .end
